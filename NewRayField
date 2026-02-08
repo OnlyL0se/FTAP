@@ -1164,7 +1164,7 @@ local function Hide(notify: boolean?)
 	task.spawn(closeSearch)
 
 	Debounce = true
-	UserInputService.MouseIconEnabled = false
+	if getgenv().MouseChangeVisible then UserInputService.MouseIconEnabled = false end
 	if notify then
 		if useMobilePrompt then 
 			RayfieldLibrary:Notify({Title = "Interface Hidden", Content = "The interface has been hidden, you can unhide the interface by tapping 'Show'.", Duration = 7, Image = 4400697855})
@@ -3725,12 +3725,6 @@ end
 	end
 -- end)
 
-if CoreGui:FindFirstChild("Rayfield") then
-	CoreGui.Rayfield.Drag.Interact.Modal = true
-else
-	if CoreGui:FindFirstChild("HUI") then
-		CoreGui.HUI.Rayfield.Drag.Interact.Modal = true
-	end
-end
+gethui().Rayfield.Drag.Interact.Modal = true
 
 return RayfieldLibrary
