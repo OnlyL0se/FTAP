@@ -1164,6 +1164,7 @@ local function Hide(notify: boolean?)
     task.spawn(closeSearch)
 
     Debounce = true
+    print(getgenv().MouseChangeVisible)
     UserInputService.MouseIconEnabled = getgenv().MouseChangeVisible and false or UserInputService.MouseIconEnabled
 
     if notify then
