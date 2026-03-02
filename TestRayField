@@ -605,7 +605,7 @@ local Players = getService("Players")
 local CoreGui = getService("CoreGui")
 
 
-local Rayfield = useStudio and script.Parent:FindFirstChild('Rayfield') or game:GetObjects("rbxassetid://10804731440")[1]
+local Rayfield = game:GetObjects("rbxassetid://10804731440")[1]
 local buildAttempts = 0
 local correctBuild = false
 local warned
@@ -626,7 +626,7 @@ repeat
         warned = true
     end
 
-    toDestroy, Rayfield = Rayfield, useStudio and script.Parent:FindFirstChild('Rayfield') or game:GetObjects("rbxassetid://10804731440")[1]
+    toDestroy, Rayfield = Rayfield, game:GetObjects("rbxassetid://10804731440")[1]
     if toDestroy and not useStudio then toDestroy:Destroy() end
 
     buildAttempts = buildAttempts + 1
@@ -1481,21 +1481,14 @@ function RayfieldLibrary:CreateWindow(Settings)
     if Rayfield:FindFirstChild('Loading') then
         if getgenv and not getgenv().rayfieldCached then
             Rayfield.Enabled = true
-            Rayfield.Loading.Visible = true
-
-            task.wait(1.4)
-            Rayfield.Loading.Visible = false
+--            Rayfield.Loading.Visible = true
+--
+--            task.wait(1.4)
+--            Rayfield.Loading.Visible = false
         end
     end
 
     if getgenv then getgenv().rayfieldCached = true end
-
-    if not correctBuild and not Settings.DisableBuildWarnings then
-        task.delay(3, 
-            function() 
-                RayfieldLibrary:Notify({Title = 'Build Mismatch', Content = 'Rayfield may encounter issues as you are running an incompatible interface version ('.. ((Rayfield:FindFirstChild('Build') and Rayfield.Build.Value) or 'No Build') ..').\n\nThis version of Rayfield is intended for interface build '..InterfaceBuild..'.\n\nTry rejoining and then run the script twice.', Image = 4335487866, Duration = 15})      
-            end)
-    end
 
     if Settings.ToggleUIKeybind then
         local keybind = Settings.ToggleUIKeybind
@@ -1515,9 +1508,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 
     ensureFolder(RayfieldFolder)
 
-    if not requestsDisabled then
-        sendReport("window_created", Settings.Name or "Unknown")
-    end
     local Passthrough = false
     Topbar.Title.Text = Settings.Name
 
@@ -1584,20 +1574,6 @@ function RayfieldLibrary:CreateWindow(Settings)
     Elements.Visible = false
     LoadingFrame.Visible = true
 
-    if not Settings.DisableRayfieldPrompts then
-        task.spawn(function()
-            while true do
-                task.wait(math.random(180, 600))
-                RayfieldLibrary:Notify({
-                    Title = "Rayfield Interface",
-                    Content = "Enjoying this UI library? Find it at sirius.menu/discord",
-                    Duration = 7,
-                    Image = 4370033185,
-                })
-            end
-        end)
-    end
-
     pcall(function()
         if not Settings.ConfigurationSaving.FileName then
             Settings.ConfigurationSaving.FileName = tostring(game.PlaceId)
@@ -1626,34 +1602,6 @@ function RayfieldLibrary:CreateWindow(Settings)
             TabButton.Title.TextTransparency = 1
             TabButton.Image.ImageTransparency = 1
             TabButton.UIStroke.Transparency = 1
-        end
-    end
-
-    if Settings.Discord and Settings.Discord.Enabled and not useStudio then
-        ensureFolder(RayfieldFolder.."/Discord Invites")
-
-        if callSafely(isfile, RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension) then
-            if requestFunc then
-                pcall(function()
-                    requestFunc({
-                        Url = 'http://127.0.0.1:6463/rpc?v=1',
-                        Method = 'POST',
-                        Headers = {
-                            ['Content-Type'] = 'application/json',
-                            Origin = 'https://discord.com'
-                        },
-                        Body = HttpService:JSONEncode({
-                            cmd = 'INVITE_BROWSER',
-                            nonce = HttpService:GenerateGUID(false),
-                            args = {code = Settings.Discord.Invite}
-                        })
-                    })
-                end)
-            end
-
-            if Settings.Discord.RememberJoins then
-                callSafely(writefile, RayfieldFolder.."/Discord Invites".."/"..Settings.Discord.Invite..ConfigurationExtension,"Rayfield RememberJoins is true for this invite, this invite will not ask you to join again")
-            end
         end
     end
 
