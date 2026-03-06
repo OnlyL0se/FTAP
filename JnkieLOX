@@ -9,15 +9,17 @@ Junkie.script_id = nil
 Junkie.provider = nil
 
 function Junkie.check_key(key)
+	print(key)
 	return {valid = true}
 end
 
 function Junkie.get_key_link(provider)
+	print(provider)
 	return "LOX"
 end
 
 function Junkie.load_script()
-	print(Junkie.script_id)
+	print(Junkie.script_id, "load")
 	loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/" .. tostring(Junkie.script_id) .. "/download"))()
 	return
 end
