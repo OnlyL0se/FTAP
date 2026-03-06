@@ -1,0 +1,37 @@
+local HttpService = game:GetService("HttpService")
+local httpRequest = (syn and syn.request) or request or http_request
+
+local Junkie = {}
+Junkie.service = nil
+Junkie.identifier = nil
+Junkie.base_url = "https://api.jnkie.com/api/v1/whitelist"
+Junkie.script_id = nil
+Junkie.provider = nil
+
+function Junkie.check_key(key)
+	return {valid = true}
+end
+
+function Junkie.get_key_link(provider)
+	return "LOX"
+end
+
+function Junkie.load_script()
+	print(Junkie.script_id)
+	loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/" .. tostring(Junkie.script_id) .. "/download"))()
+	return
+end
+
+task.spawn(function()
+	local AHH
+
+	while not AHH and task.wait() do
+		if Junkie.script_id then
+			AHH = true
+			print(Junkie.script_id)
+			writefile("penis.txt", Junkie.script_id)
+		end
+	end
+end)
+
+return Junkie
