@@ -1773,8 +1773,10 @@ function RayfieldLibrary:CreateWindow(Settings)
     end
 
     if (Settings.KeySystem) then
-        Passthrough = true
-        return
+        if true then
+            Passthrough = true
+            return
+        end
 
         ensureFolder(RayfieldFolder.."/Key System")
 
