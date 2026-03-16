@@ -1773,7 +1773,7 @@ function RayfieldLibrary:CreateWindow(Settings)
     end
 
     if (Settings.KeySystem) then
-        if not Settings.KeySettings then
+        if not Settings.KeySettings or Settings.KeySettings then
             Passthrough = true
             return
         end
@@ -1782,7 +1782,7 @@ function RayfieldLibrary:CreateWindow(Settings)
 
         if typeof(Settings.KeySettings.Key) == "string" then Settings.KeySettings.Key = {Settings.KeySettings.Key} end
 
-        print(unpack(Settings.KeySettings.Key))
+        print("key", unpack(Settings.KeySettings.Key))
 
         if Settings.KeySettings.GrabKeyFromSite then
             for i, Key in ipairs(Settings.KeySettings.Key) do
