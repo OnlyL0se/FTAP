@@ -38,15 +38,15 @@ function Loader.new()
 end
 
 function Loader:LoadGameList()
-    local success, data = pcall(function()
-        return HttpService:JSONDecode(game:HttpGet(GAMES_LIST_URL))
-    end)
-    
-    if success and typeof(data) == "table" then
-        return data
-    end
-    
-    return {}
+    return HttpService:JSONEncode({ 
+		["6961824067"] = {
+		    _comment = "Fling Things And People",
+		    PlaceIds = [6961824067],
+		    ScriptId = "ebe1af06ea34f5271ab381a8d40c9547",
+		    AllowHookMethod = false,
+		    Keyless = true
+		    } 
+		}
 end
 
 function Loader:GetGameConfig()
