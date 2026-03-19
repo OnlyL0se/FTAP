@@ -78,11 +78,7 @@ end
 function Loader:LaunchScript(key, scriptId)
     script_key = key
     
-    local success = pcall(function()
-        loadstring(game:HttpGet(SCRIPT_BASE_URL .. scriptId .. ".lua"))()
-    end)
-    
-    return success
+    loadstring(game:HttpGet(SCRIPT_BASE_URL .. scriptId .. ".lua"))()
 end
 
 local loader = Loader.new()
