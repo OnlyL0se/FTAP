@@ -1,0 +1,97 @@
+script_key = "nil"
+
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+
+cloneref(game:GetService("CoreGui"))
+
+local LocalPlayer = Players.LocalPlayer
+
+if getgenv().srv9_initialized then
+    warn("SRV9 LOADER ALREADY INITIALIZED")
+    return
+end
+
+getgenv().srv9_initialized = true
+
+repeat
+    task.wait()
+until game:IsLoaded()
+
+local GAMES_LIST_URL = "https://srv9.xyz/scripts/games.json"
+local SCRIPT_BASE_URL = "https://api.luarmor.net/files/v3/loaders/"
+local KEY_LENGTH = 32
+local GET_KEY_URL = "https://srv9.xyz/get-key"
+local DISCORD_INVITE = "https://discord.gg/dGxj46dFFn"
+
+local Loader = {}
+Loader.__index = Loader
+
+function Loader.new()
+    local self = setmetatable({}, Loader)
+    
+    self.CurrentPlaceId = game.PlaceId
+    self.GameList = self:LoadGameList()
+    self:SetupTeleportHandler()
+    
+    return self
+end
+
+function Loader:LoadGameList()
+    local success, data = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(GAMES_LIST_URL))
+    end)
+    
+    if success and typeof(data) == "table" then
+        return data
+    end
+    
+    return {}
+end
+
+function Loader:GetGameConfig()
+    for _, gameConfig in pairs(self.GameList) do
+        if typeof(gameConfig) == "table" and typeof(gameConfig.PlaceIds) == "table" then
+            for _, placeId in ipairs(gameConfig.PlaceIds) do
+                if tonumber(placeId) == self.CurrentPlaceId then
+                    return gameConfig
+                end
+            end
+        end
+    end
+    
+    return nil
+end
+
+function Loader:SetupTeleportHandler()
+    LocalPlayer.OnTeleport:Connect(function(teleportState)
+        if queue_on_teleport and script_key then
+            queue_on_teleport('script_key="' .. script_key .. '";loadstring(game:HttpGet("https://srv9.xyz/loader.lua"))()')
+        end
+    end)
+end
+
+function Loader:ValidateKey(key, scriptId)
+    return true
+end
+
+function Loader:LaunchScript(key, scriptId)
+    script_key = key
+    
+    local success = pcall(function()
+        loadstring(game:HttpGet(SCRIPT_BASE_URL .. scriptId .. ".lua"))()
+    end)
+    
+    return success
+end
+
+local loader = Loader.new()
+local gameConfig = loader:GetGameConfig()
+
+if not gameConfig then
+    return
+end
+
+local scriptId = gameConfig.ScriptId
+
+loader:LaunchScript("", scriptId)
